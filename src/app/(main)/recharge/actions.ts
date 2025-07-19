@@ -1,12 +1,13 @@
 // src/app/(main)/recharge/actions.ts
 'use server';
 
+import { currentBalance } from '@/lib/balance';
 import { sendTelegramMessage } from '@/services/telegram';
 import { z } from 'zod';
 
 const RechargeSchema = z.object({
     phoneNumber: z.string().regex(/^01[0125][0-9]{8}$/, "رقم الهاتف غير صحيح"),
-    amount: z.string(),
+    amount: z.string().transform(Number).pipe(z.number().positive("المبلغ يجب أن يكون رقماً موجباً")),
     network: z.string(),
 });
 
@@ -19,6 +20,10 @@ export async function rechargeAction(formData: FormData) {
     });
 
     const { phoneNumber, amount, network } = validatedData;
+    
+    if (currentBalance < amount) {
+        return { success: false, message: 'رصيدك غير كافٍ لإتمام هذه العملية.' };
+    }
 
     const message = `
 *عملية شحن رصيد جديدة*
@@ -30,7 +35,7 @@ export async function rechargeAction(formData: FormData) {
 
     await sendTelegramMessage(message);
 
-    return { success: true, message: `تم إرسال طلب شحن بقيمة ${amount} جنيه إلى الرقم ${phoneNumber}.` };
+    return { success: true, message: `طلبك قيد التنفيذ، ستصلك رسالة تأكيد.` };
   } catch (error) {
     console.error('Error in rechargeAction:', error);
     if (error instanceof z.ZodError) {

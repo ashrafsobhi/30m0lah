@@ -23,7 +23,7 @@ export default function RechargePage() {
             const result = await rechargeAction(formData);
             if (result.success) {
                 toast({
-                    title: "تم إرسال الطلب",
+                    title: "طلبك قيد التنفيذ",
                     description: result.message,
                 });
                 formRef.current?.reset();
@@ -57,7 +57,7 @@ export default function RechargePage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="amount">المبلغ (ج.م)</Label>
-                                <Input id="amount" name="amount" type="number" placeholder="مثال: 50" required min="5" />
+                                <Input id="amount" name="amount" type="number" placeholder="مثال: 50" required min="5" step="0.01" />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="network">شركة المحمول</Label>

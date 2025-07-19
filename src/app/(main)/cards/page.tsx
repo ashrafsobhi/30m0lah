@@ -38,7 +38,7 @@ export default function BuyCardsPage() {
             const result = await buyCardAction(formData);
             if (result.success) {
                 toast({
-                    title: "تم إرسال الطلب بنجاح",
+                    title: "طلبك قيد التنفيذ",
                     description: result.message,
                 });
                 setSelectedCard(null);

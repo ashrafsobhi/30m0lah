@@ -41,7 +41,7 @@ export default function BillsPage() {
 
             if (result.success) {
                 toast({
-                    title: "تم إرسال الطلب بنجاح",
+                    title: "طلبك قيد التنفيذ",
                     description: result.message,
                 });
                 setSelectedService(null);
@@ -86,7 +86,7 @@ export default function BillsPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="amount">المبلغ (ج.م)</Label>
-                                <Input id="amount" name="amount" type="number" placeholder="0.00" required min="1" />
+                                <Input id="amount" name="amount" type="number" placeholder="0.00" required min="1" step="0.01" />
                             </div>
                         </div>
                         <DialogFooter>
