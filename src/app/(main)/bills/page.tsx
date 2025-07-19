@@ -15,7 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Flame, Droplets, Zap, Wifi, Phone, Landmark } from 'lucide-react';
+import { Flame, Droplets, Zap, Wifi, Phone, Landmark, Loader2 } from 'lucide-react';
+import { payBillAction } from './actions';
 
 const billServices = [
     { name: 'الكهرباء', icon: <Zap className="h-8 w-8" /> },
@@ -28,15 +29,30 @@ const billServices = [
 
 export default function BillsPage() {
     const [selectedService, setSelectedService] = React.useState<string | null>(null);
+    const [isPending, startTransition] = React.useTransition();
     const { toast } = useToast();
     
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        toast({
-            title: "تم الدفع بنجاح",
-            description: `تم دفع فاتورة ${selectedService} الخاصة بك.`,
+        startTransition(async () => {
+            const formData = new FormData(event.currentTarget);
+            formData.append('service', selectedService!);
+            const result = await payBillAction(formData);
+
+            if (result.success) {
+                toast({
+                    title: "تم إرسال الطلب بنجاح",
+                    description: result.message,
+                });
+                setSelectedService(null);
+            } else {
+                toast({
+                    title: "حدث خطأ",
+                    description: result.message,
+                    variant: 'destructive',
+                });
+            }
         });
-        setSelectedService(null);
     };
 
     return (
@@ -66,18 +82,21 @@ export default function BillsPage() {
                         <div className="my-6 space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="accountNumber">رقم الحساب / المشترك</Label>
-                                <Input id="accountNumber" type="text" placeholder="أدخل الرقم" required />
+                                <Input id="accountNumber" name="accountNumber" type="text" placeholder="أدخل الرقم" required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="amount">المبلغ (ج.م)</Label>
-                                <Input id="amount" type="number" placeholder="0.00" required min="1" />
+                                <Input id="amount" name="amount" type="number" placeholder="0.00" required min="1" />
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">ادفع الآن</Button>
                              <DialogClose asChild>
-                                <Button type="button" variant="ghost">إلغاء</Button>
+                                <Button type="button" variant="ghost" disabled={isPending}>إلغاء</Button>
                             </DialogClose>
+                            <Button type="submit" disabled={isPending}>
+                                {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                                ادفع الآن
+                            </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

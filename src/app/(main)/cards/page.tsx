@@ -4,38 +4,52 @@ import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Send } from 'lucide-react';
+import { Loader2, Send } from 'lucide-react';
+import { buyCardAction } from './actions';
 
 const cardDenominations = [5, 10, 15, 25, 50, 100];
 
 export default function BuyCardsPage() {
     const [selectedCard, setSelectedCard] = React.useState<number | null>(null);
-    const [rechargeCode, setRechargeCode] = React.useState<string>('');
+    const [isPending, startTransition] = React.useTransition();
     const { toast } = useToast();
 
     const handleCardClick = (value: number) => {
-        const code = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
-        setRechargeCode(code);
         setSelectedCard(value);
     };
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(rechargeCode);
-        toast({ title: "تم النسخ!", description: "تم نسخ كود الشحن." });
-    };
-    
-    const handleSend = () => {
-        toast({ title: "تم الإرسال!", description: "تم إرسال كود الشحن." });
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        startTransition(async () => {
+            const formData = new FormData(event.currentTarget);
+            formData.append('cardValue', String(selectedCard));
+            
+            const result = await buyCardAction(formData);
+            if (result.success) {
+                toast({
+                    title: "تم إرسال الطلب بنجاح",
+                    description: result.message,
+                });
+                setSelectedCard(null);
+            } else {
+                toast({
+                    title: "حدث خطأ",
+                    description: result.message,
+                    variant: "destructive",
+                });
+            }
+        });
     };
 
     return (
@@ -58,31 +72,34 @@ export default function BuyCardsPage() {
                 ))}
             </div>
 
-            <AlertDialog open={!!selectedCard} onOpenChange={(open) => !open && setSelectedCard(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className='font-headline'>كارت الشحن الخاص بك</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            لقد قمت بشراء كارت شحن بقيمة {selectedCard} جنيه.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="my-4 p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground">كود الشحن</p>
-                        <p className="text-2xl font-bold tracking-widest font-code" style={{direction: 'ltr'}}>{rechargeCode.replace(/(\d{4})/g, '$1 ').trim()}</p>
-                    </div>
-                    <AlertDialogFooter className='gap-2 sm:gap-0 flex-row-reverse justify-start'>
-                         <AlertDialogAction onClick={() => setSelectedCard(null)}>تم</AlertDialogAction>
-                         <Button onClick={handleCopy} variant="outline">
-                            <Copy className="ml-2 h-4 w-4" />
-                            نسخ الكود
-                        </Button>
-                        <Button variant="ghost" onClick={handleSend}>
-                            <Send className="ml-2 h-4 w-4" />
-                            إرسال لصديق
-                        </Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <Dialog open={!!selectedCard} onOpenChange={(open) => !open && setSelectedCard(null)}>
+                <DialogContent>
+                    <form onSubmit={handleSubmit}>
+                        <DialogHeader>
+                            <DialogTitle className='font-headline'>إرسال كارت شحن بقيمة {selectedCard} جنيه</DialogTitle>
+                            <DialogDescription>
+                                أدخل رقم الهاتف الذي سيتم إرسال الكارت إليه.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="my-6 space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="phoneNumber">رقم الهاتف</Label>
+                                <Input id="phoneNumber" name="phoneNumber" type="tel" placeholder="01xxxxxxxxx" required />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="ghost" disabled={isPending}>إلغاء</Button>
+                            </DialogClose>
+                            <Button type="submit" disabled={isPending}>
+                                {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                                <Send className="ml-2 h-4 w-4" />
+                                إرسال
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
