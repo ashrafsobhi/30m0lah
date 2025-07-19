@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/page-header';
 import { FeatureCard } from '@/components/feature-card';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { currentBalance } from '@/lib/balance';
 
 export default function DashboardPage() {
     const features = [
@@ -44,11 +45,18 @@ export default function DashboardPage() {
         },
     ];
 
+    const formattedBalance = new Intl.NumberFormat('ar-EG', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(currentBalance);
+
+
     return (
         <div className="space-y-8">
             <PageHeader
                 title="أهلاً بك في محفظة عملة"
-                description="محفظتك الذكية لجميع خدماتك المالية في مكان واحد."
+                description="محفظتك الذكية لجميع الخدمات المالية في مكان واحد."
             />
             
             <Card className="shadow-lg">
@@ -56,7 +64,7 @@ export default function DashboardPage() {
                     <div>
                         <CardDescription>الرصيد الحالي</CardDescription>
                         <CardTitle className="font-headline text-4xl text-primary">
-                            ٥,٢٥٠.٧٥
+                            {formattedBalance}
                             <span className="text-lg font-normal text-muted-foreground ml-1">ج.م</span>
                         </CardTitle>
                     </div>
