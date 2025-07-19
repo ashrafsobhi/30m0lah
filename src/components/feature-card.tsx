@@ -13,21 +13,21 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon, title, description, href, className }: FeatureCardProps) {
     return (
-        <Link href={href} className="flex">
-            <Card className={cn("w-full transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary", className)}>
+        <Card asChild className={cn("w-full transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary", className)}>
+            <Link href={href} className="flex flex-col">
                 <CardHeader>
                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                         {icon}
                     </div>
                     <CardTitle className="font-headline">{title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <CardDescription className="mb-4">{description}</CardDescription>
-                    <div className="flex items-center text-sm font-semibold text-primary">
+                <CardContent className="flex flex-col flex-grow">
+                    <CardDescription className="mb-4 flex-grow">{description}</CardDescription>
+                    <div className="flex items-center text-sm font-semibold text-primary mt-auto">
                         اذهب إلى {title} <ArrowLeft className="mr-2 h-4 w-4" />
                     </div>
                 </CardContent>
-            </Card>
-        </Link>
+            </Link>
+        </Card>
     );
 }
