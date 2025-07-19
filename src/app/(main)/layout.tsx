@@ -44,6 +44,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
 
 const navItems = [
@@ -54,6 +55,13 @@ const navItems = [
   { href: '/bills', label: 'دفع فواتير', icon: Receipt },
   { href: '/history', label: 'سجل المعاملات', icon: History },
   { href: '/insights', label: 'تحليلات ذكية', icon: Sparkles },
+];
+
+const bottomNavItems = [
+  { href: '/', label: 'الرئيسية', icon: LayoutDashboard },
+  { href: '/history', label: 'السجل', icon: History },
+  { href: '/cards', label: 'الكروت', icon: CreditCard },
+  { href: '/transfer', label: 'تحويل', icon: ArrowRightLeft },
 ];
 
 export default function MainLayout({
@@ -68,7 +76,7 @@ export default function MainLayout({
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <Link href="/" className="block">
+          <Link href="/">
             <Logo className="text-foreground" />
             <span className="sr-only">محفظة عملة</span>
           </Link>
@@ -148,7 +156,23 @@ export default function MainLayout({
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex-1 p-4 sm:p-6 md:p-8">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 md:p-8 pb-20 md:pb-8">{children}</main>
+        {/* Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm md:hidden">
+            <div className="grid h-16 grid-cols-4 items-center">
+                {bottomNavItems.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                        <Link key={item.href} href={item.href} className="flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-primary transition-colors">
+                           <div className={cn("flex items-center justify-center rounded-full p-2 transition-colors", isActive ? "bg-primary/10" : "")}>
+                            <item.icon className={cn("h-6 w-6", isActive ? "text-primary" : "")} />
+                           </div>
+                           <span className={cn("text-xs font-medium", isActive ? "text-primary" : "")}>{item.label}</span>
+                        </Link>
+                    )
+                })}
+            </div>
+        </nav>
       </SidebarInset>
     </SidebarProvider>
   );
