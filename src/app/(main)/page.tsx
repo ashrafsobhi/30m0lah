@@ -1,11 +1,34 @@
-import { ArrowRightLeft, CreditCard, Download, Smartphone, Receipt, History, Sparkles } from 'lucide-react';
+
+'use client';
+
+import React from 'react';
+import { ArrowRightLeft, CreditCard, Smartphone, Receipt, History, Sparkles } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { FeatureCard } from '@/components/feature-card';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { currentBalance } from '@/lib/balance';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
+import { requestBalanceAction } from './actions';
+
 
 export default function DashboardPage() {
+    const { toast } = useToast();
+    const [isPending, startTransition] = React.useTransition();
+    const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
     const features = [
         {
             title: "تحويل أموال",
@@ -51,6 +74,27 @@ export default function DashboardPage() {
         maximumFractionDigits: 2,
     }).format(currentBalance);
 
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        startTransition(async () => {
+            const formData = new FormData(event.currentTarget);
+            const result = await requestBalanceAction(formData);
+            if (result.success) {
+                toast({
+                    title: "تم إرسال طلبك",
+                    description: "طلبك قيد المراجعة الآن.",
+                });
+                setIsDialogOpen(false);
+            } else {
+                 toast({
+                    title: "حدث خطأ",
+                    description: result.message,
+                    variant: 'destructive'
+                });
+            }
+        });
+    }
+
 
     return (
         <div className="space-y-8">
@@ -68,7 +112,7 @@ export default function DashboardPage() {
                             <span className="text-lg font-normal text-muted-foreground ml-1">ج.م</span>
                         </CardTitle>
                     </div>
-                    <Button>أضف رصيد</Button>
+                    <Button onClick={() => setIsDialogOpen(true)}>أضف رصيد</Button>
                 </CardHeader>
             </Card>
 
@@ -83,6 +127,34 @@ export default function DashboardPage() {
                     />
                 ))}
             </div>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <form onSubmit={handleSubmit}>
+                        <DialogHeader>
+                            <DialogTitle className='font-headline'>طلب إضافة رصيد</DialogTitle>
+                            <DialogDescription>
+                                أدخل المبلغ الذي تود إضافته إلى رصيدك. ستتم مراجعة طلبك.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="my-6 space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="amount">المبلغ (ج.م)</Label>
+                                <Input id="amount" name="amount" type="number" placeholder="0.00" required min="1" />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                             <DialogClose asChild>
+                                <Button type="button" variant="ghost" disabled={isPending}>إلغاء</Button>
+                            </DialogClose>
+                            <Button type="submit" disabled={isPending}>
+                                {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                                إرسال الطلب
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -2,4 +2,4 @@
 // You can create a Telegram bot or another script
 // to programmatically update the value of currentBalance.
 
-export const currentBalance = 5250.75;
+export const currentBalance = 0.00;
