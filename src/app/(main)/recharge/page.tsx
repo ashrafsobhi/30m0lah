@@ -15,8 +15,8 @@ export default function RechargePage() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         toast({
-            title: "Recharge Successful",
-            description: "The mobile number has been recharged.",
+            title: "تم الشحن بنجاح",
+            description: "تم شحن رصيد رقم الموبايل.",
         });
         (event.target as HTMLFormElement).reset();
     };
@@ -24,35 +24,35 @@ export default function RechargePage() {
     return (
         <div>
             <PageHeader
-                title="Mobile Recharge"
-                description="Top up your mobile balance instantly."
+                title="شحن رصيد الموبايل"
+                description="اشحن رصيد موبايلك فوراً."
             />
             <Card className="max-w-2xl mx-auto">
                 <form onSubmit={handleSubmit}>
                     <CardHeader>
-                        <CardTitle className='font-headline'>Direct Recharge</CardTitle>
-                        <CardDescription>Enter the mobile number and amount to recharge.</CardDescription>
+                        <CardTitle className='font-headline'>شحن مباشر</CardTitle>
+                        <CardDescription>أدخل رقم الموبايل والمبلغ المراد شحنه.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
-                            <Label htmlFor="recipient">Mobile Number</Label>
-                            <Input id="recipient" type="tel" placeholder="e.g., 01xxxxxxxxx" required />
+                            <Label htmlFor="recipient">رقم الموبايل</Label>
+                            <Input id="recipient" type="tel" placeholder="مثال: 01xxxxxxxxx" required />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="amount">Amount (EGP)</Label>
-                                <Input id="amount" type="number" placeholder="e.g., 50" required min="5" />
+                                <Label htmlFor="amount">المبلغ (ج.م)</Label>
+                                <Input id="amount" type="number" placeholder="مثال: 50" required min="5" />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="network">Mobile Network</Label>
+                                <Label htmlFor="network">شركة المحمول</Label>
                                 <Select required>
                                     <SelectTrigger id="network">
-                                        <SelectValue placeholder="Select a network" />
+                                        <SelectValue placeholder="اختر شركة" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="vodafone">Vodafone</SelectItem>
-                                        <SelectItem value="orange">Orange</SelectItem>
-                                        <SelectItem value="etisalat">Etisalat</SelectItem>
+                                        <SelectItem value="vodafone">فودافون</SelectItem>
+                                        <SelectItem value="orange">أورنچ</SelectItem>
+                                        <SelectItem value="etisalat">اتصالات</SelectItem>
                                         <SelectItem value="we">WE</SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -60,9 +60,9 @@ export default function RechargePage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit" className="w-full md:w-auto ml-auto">
-                            <Smartphone className="mr-2 h-4 w-4" />
-                            Recharge Now
+                        <Button type="submit" className="w-full md:w-auto mr-auto">
+                            <Smartphone className="ml-2 h-4 w-4" />
+                            اشحن الآن
                         </Button>
                     </CardFooter>
                 </form>

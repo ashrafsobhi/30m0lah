@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 interface FeatureCardProps {
     icon: React.ReactNode;
@@ -24,7 +24,7 @@ export function FeatureCard({ icon, title, description, href, className }: Featu
                 <CardContent>
                     <CardDescription className="mb-4">{description}</CardDescription>
                     <div className="flex items-center text-sm font-semibold text-primary">
-                        Go to {title} <ArrowRight className="ml-2 h-4 w-4" />
+                        اذهب إلى {title} <ArrowLeft className="mr-2 h-4 w-4" />
                     </div>
                 </CardContent>
             </Card>

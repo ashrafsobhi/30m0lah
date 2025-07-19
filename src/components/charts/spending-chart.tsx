@@ -1,6 +1,6 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
 
 import {
   Card,
@@ -22,7 +22,7 @@ interface SpendingChartProps {
 
 const chartConfig = {
   amount: {
-    label: 'Amount (EGP)',
+    label: 'المبلغ (ج.م)',
     color: 'hsl(var(--primary))',
   },
 } satisfies ChartConfig;
@@ -31,28 +31,29 @@ export function SpendingChart({ data }: SpendingChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Spending by Category</CardTitle>
+        <CardTitle className="font-headline">الإنفاق حسب الفئة</CardTitle>
         <CardDescription>
-          Here's a breakdown of your spending across different categories.
+          هنا تفصيل إنفاقك عبر الفئات المختلفة.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <BarChart accessibilityLayer data={data}>
-            <CartesianGrid vertical={false} />
-            <XAxis
+          <BarChart accessibilityLayer data={data} layout="vertical" margin={{ right: 20, left: 20 }}>
+            <CartesianGrid horizontal={false} />
+            <YAxis
               dataKey="category"
+              type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              width={80}
             />
-             <YAxis />
+             <XAxis type="number" dataKey="amount" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="dot" />}
             />
-            <Bar dataKey="amount" fill="var(--color-amount)" radius={4} />
+            <Bar dataKey="amount" fill="var(--color-amount)" radius={4} layout="vertical" />
           </BarChart>
         </ChartContainer>
       </CardContent>

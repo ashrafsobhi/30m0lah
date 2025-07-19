@@ -18,12 +18,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Flame, Droplets, Zap, Wifi, Phone, Landmark } from 'lucide-react';
 
 const billServices = [
-    { name: 'Electricity', icon: <Zap className="h-8 w-8" /> },
-    { name: 'Water', icon: <Droplets className="h-8 w-8" /> },
-    { name: 'Gas', icon: <Flame className="h-8 w-8" /> },
-    { name: 'Internet', icon: <Wifi className="h-8 w-8" /> },
-    { name: 'Mobile', icon: <Phone className="h-8 w-8" /> },
-    { name: 'Government', icon: <Landmark className="h-8 w-8" /> },
+    { name: 'الكهرباء', icon: <Zap className="h-8 w-8" /> },
+    { name: 'المياه', icon: <Droplets className="h-8 w-8" /> },
+    { name: 'الغاز', icon: <Flame className="h-8 w-8" /> },
+    { name: 'الإنترنت', icon: <Wifi className="h-8 w-8" /> },
+    { name: 'الموبايل', icon: <Phone className="h-8 w-8" /> },
+    { name: 'خدمات حكومية', icon: <Landmark className="h-8 w-8" /> },
 ];
 
 export default function BillsPage() {
@@ -33,8 +33,8 @@ export default function BillsPage() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         toast({
-            title: "Payment Successful",
-            description: `Your ${selectedService} bill has been paid.`,
+            title: "تم الدفع بنجاح",
+            description: `تم دفع فاتورة ${selectedService} الخاصة بك.`,
         });
         setSelectedService(null);
     };
@@ -42,8 +42,8 @@ export default function BillsPage() {
     return (
         <div>
             <PageHeader
-                title="Bill Payments"
-                description="Easily pay all your bills from one place."
+                title="دفع الفواتير"
+                description="ادفع جميع فواتيرك بسهولة من مكان واحد."
             />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {billServices.map((service) => (
@@ -58,26 +58,26 @@ export default function BillsPage() {
                 <DialogContent>
                     <form onSubmit={handleSubmit}>
                         <DialogHeader>
-                            <DialogTitle className='font-headline'>Pay {selectedService} Bill</DialogTitle>
+                            <DialogTitle className='font-headline'>دفع فاتورة {selectedService}</DialogTitle>
                             <DialogDescription>
-                                Enter your billing details to complete the payment.
+                                أدخل تفاصيل الفاتورة لإتمام عملية الدفع.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="my-6 space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="accountNumber">Account/Subscriber Number</Label>
-                                <Input id="accountNumber" type="text" placeholder="Enter number" required />
+                                <Label htmlFor="accountNumber">رقم الحساب / المشترك</Label>
+                                <Input id="accountNumber" type="text" placeholder="أدخل الرقم" required />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="amount">Amount (EGP)</Label>
+                                <Label htmlFor="amount">المبلغ (ج.م)</Label>
                                 <Input id="amount" type="number" placeholder="0.00" required min="1" />
                             </div>
                         </div>
                         <DialogFooter>
-                            <DialogClose asChild>
-                                <Button type="button" variant="ghost">Cancel</Button>
+                            <Button type="submit">ادفع الآن</Button>
+                             <DialogClose asChild>
+                                <Button type="button" variant="ghost">إلغاء</Button>
                             </DialogClose>
-                            <Button type="submit">Pay Now</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

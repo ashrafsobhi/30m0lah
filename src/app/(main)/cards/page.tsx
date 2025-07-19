@@ -31,28 +31,28 @@ export default function BuyCardsPage() {
 
     const handleCopy = () => {
         navigator.clipboard.writeText(rechargeCode);
-        toast({ title: "Copied!", description: "Recharge code copied to clipboard." });
+        toast({ title: "تم النسخ!", description: "تم نسخ كود الشحن." });
     };
     
     const handleSend = () => {
-        toast({ title: "Sent!", description: "Recharge code has been sent." });
+        toast({ title: "تم الإرسال!", description: "تم إرسال كود الشحن." });
     };
 
     return (
         <div>
             <PageHeader
-                title="Buy Recharge Cards"
-                description="Purchase mobile recharge cards instantly."
+                title="شراء كروت شحن"
+                description="اشترِ كروت شحن الموبايل فوراً."
             />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {cardDenominations.map((value) => (
                     <Card key={value} className="text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary" onClick={() => handleCardClick(value)}>
                         <CardHeader>
                             <CardTitle className='font-headline text-3xl text-primary'>{value}</CardTitle>
-                            <CardDescription>EGP</CardDescription>
+                            <CardDescription>جنيه</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button variant="outline" className="w-full">Buy Now</Button>
+                            <Button variant="outline" className="w-full">شراء الآن</Button>
                         </CardContent>
                     </Card>
                 ))}
@@ -61,25 +61,25 @@ export default function BuyCardsPage() {
             <AlertDialog open={!!selectedCard} onOpenChange={(open) => !open && setSelectedCard(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle className='font-headline'>Your Recharge Card</AlertDialogTitle>
+                        <AlertDialogTitle className='font-headline'>كارت الشحن الخاص بك</AlertDialogTitle>
                         <AlertDialogDescription>
-                            You have purchased a {selectedCard} EGP recharge card.
+                            لقد قمت بشراء كارت شحن بقيمة {selectedCard} جنيه.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="my-4 p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground">Recharge Code</p>
-                        <p className="text-2xl font-bold tracking-widest font-code">{rechargeCode.replace(/(\d{4})/g, '$1 ').trim()}</p>
+                        <p className="text-sm text-muted-foreground">كود الشحن</p>
+                        <p className="text-2xl font-bold tracking-widest font-code" style={{direction: 'ltr'}}>{rechargeCode.replace(/(\d{4})/g, '$1 ').trim()}</p>
                     </div>
-                    <AlertDialogFooter className='gap-2 sm:gap-0'>
-                        <Button variant="outline" onClick={handleSend}>
-                            <Send className="mr-2 h-4 w-4" />
-                            Send to a friend
+                    <AlertDialogFooter className='gap-2 sm:gap-0 flex-row-reverse justify-start'>
+                         <AlertDialogAction onClick={() => setSelectedCard(null)}>تم</AlertDialogAction>
+                         <Button onClick={handleCopy} variant="outline">
+                            <Copy className="ml-2 h-4 w-4" />
+                            نسخ الكود
                         </Button>
-                        <Button onClick={handleCopy}>
-                            <Copy className="mr-2 h-4 w-4" />
-                            Copy Code
+                        <Button variant="ghost" onClick={handleSend}>
+                            <Send className="ml-2 h-4 w-4" />
+                            إرسال لصديق
                         </Button>
-                        <AlertDialogAction onClick={() => setSelectedCard(null)}>Done</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

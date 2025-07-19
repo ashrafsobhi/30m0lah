@@ -10,14 +10,15 @@ export function Logo(props: React.SVGProps<SVGSVGElement>) {
       {...props}
     >
       <text
-        x="0"
+        x="80"
         y="30"
         fontFamily="Poppins, sans-serif"
         fontSize="32"
         fontWeight="bold"
         fill="currentColor"
+        textAnchor="middle"
       >
-        3omla
+        عملة
         <tspan fill="hsl(var(--primary))">.</tspan>
       </text>
     </svg>
