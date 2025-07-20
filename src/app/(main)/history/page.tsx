@@ -1,17 +1,18 @@
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
 import { mockTransactions } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
-import { Download } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { getTransactionIcon, transactionTypeNames } from '@/lib/transaction-utils';
 
 const statusMap: { [key: string]: { text: string, variant: 'default' | 'secondary' | 'destructive', className: string } } = {
   Completed: { text: 'مكتملة', variant: 'default', className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
   Pending: { text: 'قيد الانتظار', variant: 'secondary', className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' },
   Failed: { text: 'فشلت', variant: 'destructive', className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
 };
+
 
 export default function HistoryPage() {
     return (
@@ -21,54 +22,41 @@ export default function HistoryPage() {
                 description="سجل مفصل لجميع أنشطتك المالية."
             >
                 <Button variant="outline">
-                    <Download className="ml-2 h-4 w-4" />
-                    تصدير
+                    <Filter className="ml-2 h-4 w-4" />
+                    فلترة
                 </Button>
             </PageHeader>
-            <Card>
-                <CardHeader>
-                    <CardTitle className='font-headline'>جميع المعاملات</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>التاريخ</TableHead>
-                                    <TableHead>الوصف</TableHead>
-                                    <TableHead>النوع</TableHead>
-                                    <TableHead>الحالة</TableHead>
-                                    <TableHead className="text-left">المبلغ (ج.م)</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {mockTransactions.map((tx) => {
-                                  const statusInfo = statusMap[tx.status];
-                                  return (
-                                    <TableRow key={tx.id}>
-                                        <TableCell className="font-medium whitespace-nowrap">{tx.date}</TableCell>
-                                        <TableCell>{tx.description}</TableCell>
-                                        <TableCell>{tx.type}</TableCell>
-                                        <TableCell>
-                                            <Badge variant={statusInfo.variant} 
-                                            className={cn(statusInfo.className)}>
-                                                {statusInfo.text}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className={cn(
-                                            'text-left font-semibold font-code',
-                                            tx.amount > 0 ? 'text-green-600' : 'text-red-600'
-                                        )}>
-                                            {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
-                                        </TableCell>
-                                    </TableRow>
-                                  )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+            <div className="space-y-4">
+                {mockTransactions.map((tx) => {
+                    const statusInfo = statusMap[tx.status];
+                    const Icon = getTransactionIcon(tx.type);
+                    return (
+                        <Card key={tx.id} className="transition-shadow hover:shadow-md">
+                           <CardContent className="p-4 flex items-center gap-4">
+                                <div className="p-3 rounded-full bg-primary/10 text-primary">
+                                   {Icon}
+                                </div>
+                                <div className="flex-grow">
+                                    <p className="font-semibold">{tx.description}</p>
+                                    <p className="text-sm text-muted-foreground">{tx.date} - {transactionTypeNames[tx.type]}</p>
+                                </div>
+                                <div className="text-left flex-shrink-0">
+                                   <p className={cn(
+                                        'font-bold text-lg font-code',
+                                        tx.amount > 0 ? 'text-green-600' : 'text-red-600 dark:text-red-500'
+                                    )}>
+                                        {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
+                                        <span className="text-sm font-light text-muted-foreground ml-1">ج.م</span>
+                                    </p>
+                                    <Badge variant={statusInfo.variant} className={cn("mt-1 w-full justify-center", statusInfo.className)}>
+                                        {statusInfo.text}
+                                    </Badge>
+                                </div>
+                           </CardContent>
+                        </Card>
+                    )
+                })}
+            </div>
         </div>
     );
 }
