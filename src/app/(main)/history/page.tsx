@@ -1,11 +1,20 @@
+
+'use client';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { mockTransactions } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
-import { Filter } from 'lucide-react';
+import { Filter, Printer } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getTransactionIcon, transactionTypeNames } from '@/lib/transaction-utils';
+import Link from 'next/link';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+  } from "@/components/ui/tooltip"
 
 const statusMap: { [key: string]: { text: string, variant: 'default' | 'secondary' | 'destructive', className: string } } = {
   Completed: { text: 'مكتملة', variant: 'default', className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
@@ -16,47 +25,63 @@ const statusMap: { [key: string]: { text: string, variant: 'default' | 'secondar
 
 export default function HistoryPage() {
     return (
-        <div>
-            <PageHeader
-                title="سجل المعاملات"
-                description="سجل مفصل لجميع أنشطتك المالية."
-            >
-                <Button variant="outline">
-                    <Filter className="ml-2 h-4 w-4" />
-                    فلترة
-                </Button>
-            </PageHeader>
-            <div className="space-y-4">
-                {mockTransactions.map((tx) => {
-                    const statusInfo = statusMap[tx.status];
-                    const Icon = getTransactionIcon(tx.type);
-                    return (
-                        <Card key={tx.id} className="transition-shadow hover:shadow-md">
-                           <CardContent className="p-4 flex items-center gap-4">
-                                <div className="p-3 rounded-full bg-primary/10 text-primary">
-                                   {Icon}
-                                </div>
-                                <div className="flex-grow">
-                                    <p className="font-semibold">{tx.description}</p>
-                                    <p className="text-sm text-muted-foreground">{tx.date} - {transactionTypeNames[tx.type]}</p>
-                                </div>
-                                <div className="text-left flex-shrink-0">
-                                   <p className={cn(
-                                        'font-bold text-lg font-code',
-                                        tx.amount > 0 ? 'text-green-600' : 'text-red-600 dark:text-red-500'
-                                    )}>
-                                        {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
-                                        <span className="text-sm font-light text-muted-foreground ml-1">ج.م</span>
-                                    </p>
-                                    <Badge variant={statusInfo.variant} className={cn("mt-1 w-full justify-center", statusInfo.className)}>
-                                        {statusInfo.text}
-                                    </Badge>
-                                </div>
-                           </CardContent>
-                        </Card>
-                    )
-                })}
+        <TooltipProvider>
+            <div>
+                <PageHeader
+                    title="سجل المعاملات"
+                    description="سجل مفصل لجميع أنشطتك المالية."
+                >
+                    <Button variant="outline">
+                        <Filter className="ml-2 h-4 w-4" />
+                        فلترة
+                    </Button>
+                </PageHeader>
+                <div className="space-y-4">
+                    {mockTransactions.map((tx) => {
+                        const statusInfo = statusMap[tx.status];
+                        const Icon = getTransactionIcon(tx.type);
+                        return (
+                            <Card key={tx.id} className="transition-shadow hover:shadow-md">
+                               <CardContent className="p-4 flex items-center gap-4">
+                                    <div className="p-3 rounded-full bg-primary/10 text-primary">
+                                       {Icon}
+                                    </div>
+                                    <div className="flex-grow">
+                                        <p className="font-semibold">{tx.description}</p>
+                                        <p className="text-sm text-muted-foreground">{tx.date} - {transactionTypeNames[tx.type]}</p>
+                                    </div>
+                                    <div className="text-left flex-shrink-0">
+                                       <p className={cn(
+                                            'font-bold text-lg font-code',
+                                            tx.amount > 0 ? 'text-green-600' : 'text-red-600 dark:text-red-500'
+                                        )}>
+                                            {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
+                                            <span className="text-sm font-light text-muted-foreground ml-1">ج.م</span>
+                                        </p>
+                                        <Badge variant={statusInfo.variant} className={cn("mt-1 w-full justify-center", statusInfo.className)}>
+                                            {statusInfo.text}
+                                        </Badge>
+                                    </div>
+                                    <div className="flex-shrink-0">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Link href={`/history/${tx.id}/invoice`} passHref>
+                                                    <Button variant="ghost" size="icon" aria-label="طباعة الإيصال">
+                                                        <Printer className="h-5 w-5 text-muted-foreground" />
+                                                    </Button>
+                                                </Link>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>طباعة الإيصال</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                               </CardContent>
+                            </Card>
+                        )
+                    })}
+                </div>
             </div>
-        </div>
+        </TooltipProvider>
     );
 }
