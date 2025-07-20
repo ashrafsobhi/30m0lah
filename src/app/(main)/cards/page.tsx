@@ -33,9 +33,12 @@ export default function BuyCardsPage() {
         event.preventDefault();
         startTransition(async () => {
             const formData = new FormData(event.currentTarget);
-            formData.append('cardValue', String(selectedCard));
+            const data = {
+                cardValue: String(selectedCard),
+                phoneNumber: formData.get('phoneNumber') as string,
+            };
             
-            const result = await buyCardAction(formData);
+            const result = await buyCardAction(data);
             if (result.success) {
                 toast({
                     title: "طلبك قيد التنفيذ",

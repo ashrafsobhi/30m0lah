@@ -10,12 +10,9 @@ const BuyCardSchema = z.object({
     phoneNumber: z.string().regex(/^01[0125][0-9]{8}$/, "رقم الهاتف غير صحيح"),
 });
 
-export async function buyCardAction(formData: FormData) {
+export async function buyCardAction(input: unknown) {
   try {
-    const validatedData = BuyCardSchema.parse({
-      cardValue: formData.get('cardValue'),
-      phoneNumber: formData.get('phoneNumber'),
-    });
+    const validatedData = BuyCardSchema.parse(input);
 
     const { cardValue, phoneNumber } = validatedData;
 

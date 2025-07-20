@@ -78,7 +78,8 @@ export default function DashboardPage() {
         event.preventDefault();
         startTransition(async () => {
             const formData = new FormData(event.currentTarget);
-            const result = await requestBalanceAction(formData);
+            const amount = formData.get('amount') as string;
+            const result = await requestBalanceAction({ amount });
             if (result.success) {
                 toast({
                     title: "تم إرسال طلبك",

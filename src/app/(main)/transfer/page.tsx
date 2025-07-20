@@ -15,19 +15,27 @@ export default function TransferPage() {
     const { toast } = useToast();
     const [isPending, startTransition] = React.useTransition();
     const formRef = React.useRef<HTMLFormElement>(null);
+    const [wallet, setWallet] = React.useState('');
 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         startTransition(async () => {
-             const result = await transferAction(formData);
+             const data = {
+                recipient: formData.get('recipient') as string,
+                amount: formData.get('amount') as string,
+                wallet: wallet,
+                notes: formData.get('notes') as string,
+             };
+             const result = await transferAction(data);
              if (result.success) {
                 toast({
                     title: "طلبك قيد التنفيذ",
                     description: result.message,
                 });
                 formRef.current?.reset();
+                setWallet('');
             } else {
                  toast({
                     title: "حدث خطأ",
@@ -62,7 +70,7 @@ export default function TransferPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="wallet">مزود المحفظة</Label>
-                                <Select name="wallet" required>
+                                <Select name="wallet" required value={wallet} onValueChange={setWallet}>
                                     <SelectTrigger id="wallet">
                                         <SelectValue placeholder="اختر مزود الخدمة" />
                                     </SelectTrigger>

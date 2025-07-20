@@ -5,15 +5,12 @@ import { sendTelegramMessage } from '@/services/telegram';
 import { z } from 'zod';
 
 const RequestBalanceSchema = z.object({
-  amount: z.string(),
+  amount: z.string().min(1, "المبلغ مطلوب"),
 });
 
-export async function requestBalanceAction(formData: FormData) {
+export async function requestBalanceAction(input: unknown) {
   try {
-    const validatedData = RequestBalanceSchema.parse({
-      amount: formData.get('amount'),
-    });
-
+    const validatedData = RequestBalanceSchema.parse(input);
     const { amount } = validatedData;
 
     const message = `

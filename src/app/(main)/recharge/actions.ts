@@ -8,17 +8,12 @@ import { z } from 'zod';
 const RechargeSchema = z.object({
     phoneNumber: z.string().regex(/^01[0125][0-9]{8}$/, "رقم الهاتف غير صحيح"),
     amount: z.string().transform(Number).pipe(z.number().positive("المبلغ يجب أن يكون رقماً موجباً")),
-    network: z.string(),
+    network: z.string().min(1),
 });
 
-export async function rechargeAction(formData: FormData) {
+export async function rechargeAction(input: unknown) {
   try {
-    const validatedData = RechargeSchema.parse({
-      phoneNumber: formData.get('recipient'),
-      amount: formData.get('amount'),
-      network: formData.get('network'),
-    });
-
+    const validatedData = RechargeSchema.parse(input);
     const { phoneNumber, amount, network } = validatedData;
     
     if (currentBalance < amount) {

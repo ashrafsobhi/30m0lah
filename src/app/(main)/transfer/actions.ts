@@ -8,18 +8,13 @@ import { z } from 'zod';
 const TransferSchema = z.object({
     recipient: z.string().regex(/^01[0125][0-9]{8}$/, "رقم المستلم غير صحيح"),
     amount: z.string().transform(Number).pipe(z.number().positive("المبلغ يجب أن يكون رقماً موجباً")),
-    wallet: z.string(),
+    wallet: z.string().min(1),
     notes: z.string().optional(),
 });
 
-export async function transferAction(formData: FormData) {
+export async function transferAction(input: unknown) {
   try {
-    const validatedData = TransferSchema.parse({
-      recipient: formData.get('recipient'),
-      amount: formData.get('amount'),
-      wallet: formData.get('wallet'),
-      notes: formData.get('notes'),
-    });
+    const validatedData = TransferSchema.parse(input);
 
     const { recipient, amount, wallet, notes } = validatedData;
     

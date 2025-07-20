@@ -14,19 +14,26 @@ export default function RechargePage() {
     const { toast } = useToast();
     const [isPending, startTransition] = React.useTransition();
     const formRef = React.useRef<HTMLFormElement>(null);
+    const [network, setNetwork] = React.useState('');
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
         startTransition(async () => {
-            const result = await rechargeAction(formData);
+            const data = {
+                phoneNumber: formData.get('recipient') as string,
+                amount: formData.get('amount') as string,
+                network: network,
+            };
+            const result = await rechargeAction(data);
             if (result.success) {
                 toast({
                     title: "طلبك قيد التنفيذ",
                     description: result.message,
                 });
                 formRef.current?.reset();
+                setNetwork('');
             } else {
                  toast({
                     title: "حدث خطأ",
@@ -61,7 +68,7 @@ export default function RechargePage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="network">شركة المحمول</Label>
-                                <Select name="network" required>
+                                <Select name="network" required value={network} onValueChange={setNetwork}>
                                     <SelectTrigger id="network">
                                         <SelectValue placeholder="اختر شركة" />
                                     </SelectTrigger>

@@ -6,18 +6,14 @@ import { sendTelegramMessage } from '@/services/telegram';
 import { z } from 'zod';
 
 const BillPaymentSchema = z.object({
-  service: z.string(),
-  accountNumber: z.string(),
+  service: z.string().min(1),
+  accountNumber: z.string().min(1),
   amount: z.string().transform(Number).pipe(z.number().positive("المبلغ يجب أن يكون رقماً موجباً")),
 });
 
-export async function payBillAction(formData: FormData) {
+export async function payBillAction(input: unknown) {
   try {
-    const validatedData = BillPaymentSchema.parse({
-      service: formData.get('service'),
-      accountNumber: formData.get('accountNumber'),
-      amount: formData.get('amount'),
-    });
+    const validatedData = BillPaymentSchema.parse(input);
 
     const { service, accountNumber, amount } = validatedData;
     

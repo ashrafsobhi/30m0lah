@@ -36,8 +36,12 @@ export default function BillsPage() {
         event.preventDefault();
         startTransition(async () => {
             const formData = new FormData(event.currentTarget);
-            formData.append('service', selectedService!);
-            const result = await payBillAction(formData);
+            const data = {
+                service: selectedService!,
+                accountNumber: formData.get('accountNumber') as string,
+                amount: formData.get('amount') as string,
+            };
+            const result = await payBillAction(data);
 
             if (result.success) {
                 toast({
